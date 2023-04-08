@@ -12,6 +12,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/gusaul/grpcox/core"
 	"github.com/gusaul/grpcox/handler"
+	"go.uber.org/zap"
 )
 
 func main() {
@@ -40,6 +41,19 @@ func main() {
 		IdleTimeout:  time.Second * 60,
 		Handler:      muxRouter,
 	}
+
+	logger, _ := zap.NewProduction()
+	defer logger.Sync() // flushes buffer, if any
+	sugar := logger.Sugar()
+	sugar.Infow("failed to fetch URL",
+		// Structured context as loosely typed key-value pairs.
+		"url", "dummy_url",
+		"attempt", 3,
+		"backoff", time.Second,
+	)
+	sugar.Infof("Failed to fetch URL: %s", "dummy_url")
+	sugar.Desugar().Fire("Fire is burning")
+	logger.Fire("there is a fire")
 
 	fmt.Println("Service started on", addr)
 	go func() {
