@@ -36,6 +36,12 @@ func NewConnectionStore() *ConnStore {
 	}
 }
 
+// RunGC
+func (c *ConnStore) RunGC(interval time.Duration) {
+	_ = interval
+	return
+}
+
 // StartGC - start gc ticker
 func (c *ConnStore) StartGC(interval time.Duration) {
 	if interval <= 0 {
